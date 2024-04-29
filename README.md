@@ -1,8 +1,8 @@
 # APi testing using Postman :-
-Over 15+ request are tested 
-Over 50+ scripts are used to test the APIs
-Html reprt of the API test is provided
-APIs used are from swagger
+Over 15+ request are tested. 
+Over 50+ scripts are used to test the APIs.
+Html report of the API test is provided.
+APIs used are from swagger.
 Project contains APIs of Pet Store
   1>Modules of the pet store which are used for testing are :
     a>User Module

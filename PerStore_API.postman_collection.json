@@ -1,0 +1,1359 @@
+{
+	"info": {
+		"_postman_id": "9d357298-c758-4399-b9b1-51012cbc6366",
+		"name": "PerStore_API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34434442"
+	},
+	"item": [
+		{
+			"name": "pet_store user module",
+			"item": [
+				{
+					"name": "login user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Create user credentials\r",
+									"var userFirstName =  pm.variables.replaceIn(\"{{$randomFirstName}}\")\r",
+									"var userLastName =  pm.variables.replaceIn(\"{{$randomLastName}}\")\r",
+									"var userName =  pm.variables.replaceIn(userFirstName+\"{{$randomInt}}\")\r",
+									"var password =  pm.variables.replaceIn(userFirstName+\"{{$randomInt}}\"+userLastName) \r",
+									"\r",
+									"// Store the user credential as environment level\r",
+									"pm.environment.set(\"userName\", userName);\r",
+									"pm.environment.set(\"password\", password);  \r",
+									"\r",
+									"// console.log((pm.collectionVariables.get(\"firstName\")));\r",
+									"// console.log((pm.collectionVariables.get(\"lastName\")));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test('Response time is less than 1000ms', function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Log in status\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"logged in user session\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "https://petstore.swagger.io/v2/user/login?username={{userName}}&password={{password}}",
+							"protocol": "https",
+							"host": [
+								"petstore",
+								"swagger",
+								"io"
+							],
+							"path": [
+								"v2",
+								"user",
+								"login"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{userName}}"
+								},
+								{
+									"key": "password",
+									"value": "{{password}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Create user credentials\r",
+									"var rand_firstname = pm.variables.replaceIn(\"{{$randomFirstName}}\") \r",
+									"var rand_lastname = pm.variables.replaceIn(\"{{$randomLastName}}\")\r",
+									"var rand_username = pm.variables.replaceIn(rand_firstname+\"{{$randomInt}}\")\r",
+									"var rand_password = pm.variables.replaceIn(rand_username+rand_lastname)\r",
+									"var rand_id = pm.variables.replaceIn(\"{{$randomInt}}\")\r",
+									"\r",
+									"// Store the user credential as collection level\r",
+									"pm.collectionVariables.set(\"addedUserId\", rand_id); \r",
+									"pm.collectionVariables.set(\"addedUserName\", rand_username);\r",
+									"pm.collectionVariables.set(\"addedFirstName\", rand_firstname);\r",
+									"pm.collectionVariables.set(\"addedLastName\", rand_lastname);\r",
+									"pm.collectionVariables.set(\"addedEmail\", rand_username+\"@gmail.com\");\r",
+									"pm.collectionVariables.set(\"addedPassword\", rand_password);\r",
+									"pm.collectionVariables.set(\"addedPhone\", \"1234567890\");\r",
+									"pm.collectionVariables.set(\"addedUserStatus\", 0);\r",
+									"\r",
+									"// console.log((pm.collectionVariables.get(\"addedUserId\")));\r",
+									"// console.log((pm.collectionVariables.get(\"addedFirstName\")));\r",
+									"// console.log((pm.collectionVariables.get(\"addedLastName\")));\r",
+									"// console.log((pm.collectionVariables.get(\"addedUsername\")));\r",
+									"// console.log((pm.collectionVariables.get(\"addedPassword\")));\r",
+									"// console.log((pm.collectionVariables.get(\"addedUserStatus\")));\r",
+									"\r",
+									"//console.log(randomnum);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Check status code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Response time is less than 1000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check code in response data\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(200);\r",
+									"});\r",
+									"pm.test(\"Check user id\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql(pm.variables.replaceIn(\"{{addedUserId}}\"));\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": {{addedUserId}},\r\n    \"username\": \"{{addedUserName}}\",\r\n    \"firstName\": \"{{addedFirstName}}\",\r\n    \"lastName\": \"{{addedLastName}}\",\r\n    \"email\": \"{{addedEmail}}\",\r\n    \"password\": \"{{addedPassword}}\",\r\n    \"phone\": \"{{addedPhone}}\",\r\n    \"userStatus\": {{addedUserStatus}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://petstore.swagger.io/v2/user",
+							"protocol": "https",
+							"host": [
+								"petstore",
+								"swagger",
+								"io"
+							],
+							"path": [
+								"v2",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User By Name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Check status code', function () {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('Response time is less than 1000ms', function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"})",
+									"",
+									"pm.test(\"Check for response JSON values\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id.toString()).to.eql(pm.variables.replaceIn(\"{{addedUserId}}\"));",
+									"    pm.expect(jsonData.username).to.eql(pm.variables.replaceIn(\"{{addedUserName}}\"));",
+									"    pm.expect(jsonData.firstName).to.eql(pm.variables.replaceIn(\"{{addedFirstName}}\"));",
+									"    pm.expect(jsonData.lastName).to.eql(pm.variables.replaceIn(\"{{addedLastName}}\"));",
+									"    pm.expect(jsonData.email).to.eql(pm.variables.replaceIn(\"{{addedEmail}}\"));",
+									"    pm.expect(jsonData.password).to.eql(pm.variables.replaceIn(\"{{addedPassword}}\"));",
+									"    pm.expect(jsonData.phone).to.eql(pm.variables.replaceIn(\"{{addedPhone}}\"));",
+									"    pm.expect(jsonData.userStatus.toString()).to.eql(pm.variables.replaceIn(\"{{addedUserStatus}}\"));",
+									"});",
+									"",
+									"//  Schema validarion ",
+									"var schema = {",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"id\": {",
+									"      \"type\": \"integer\"",
+									"    },",
+									"    \"username\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"firstName\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"lastName\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"email\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"password\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"phone\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"userStatus\": {",
+									"      \"type\": \"integer\"",
+									"    }",
+									"  },",
+									"  \"required\": [",
+									"    \"id\",",
+									"    \"username\",",
+									"    \"firstName\",",
+									"    \"lastName\",",
+									"    \"email\",",
+									"    \"password\",",
+									"    \"phone\",",
+									"    \"userStatus\"",
+									"  ]",
+									"}",
+									"pm.test('Schema is valid', function() {",
+									"  pm.response.to.have.jsonSchema(schema);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://petstore.swagger.io/v2/user/{{addedUserName}}",
+							"protocol": "https",
+							"host": [
+								"petstore",
+								"swagger",
+								"io"
+							],
+							"path": [
+								"v2",
+								"user",
+								"{{addedUserName}}"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User By Name",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var rand_num = pm.variables.replaceIn(\"{{$randomInt}}\")\r",
+									"var firstname = pm.variables.replaceIn(\"{{$addedFirstNmae}}\")\r",
+									"\r",
+									"//Updating email & phone\r",
+									"pm.collectionVariables.set(\"addedEmail\", firstname+rand_num+\"@gmail.com\");\r",
+									"pm.collectionVariables.set(\"addedPhone\", \"9876543210\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Check status code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Response time is less than 1000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check code in response data\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(200);\r",
+									"});\r",
+									"pm.test(\"Check user id\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql(pm.variables.replaceIn(\"{{addedUserId}}\"));\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": {{addedUserId}},\r\n    \"username\": \"{{addedUserName}}\",\r\n    \"firstName\": \"{{addedFirstName}}\",\r\n    \"lastName\": \"{{addedLastName}}\",\r\n    \"email\": \"{{addedEmail}}\",\r\n    \"password\": \"{{addedPassword}}\",\r\n    \"phone\": \"{{addedPhone}}\",\r\n    \"userStatus\": {{addedUserStatus}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://petstore.swagger.io/v2/user/{{addedUserName}}",
+							"protocol": "https",
+							"host": [
+								"petstore",
+								"swagger",
+								"io"
+							],
+							"path": [
+								"v2",
+								"user",
+								"{{addedUserName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User By Name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Check status code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Response time is less than 1000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check code in response data\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(200);\r",
+									"});\r",
+									"pm.test(\"Check user id\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql(pm.variables.replaceIn(\"{{addedUserName}}\"));\r",
+									"});\r",
+									"\r",
+									"// Delete all the values from collection level\r",
+									"pm.collectionVariables.unset(\"addedUserId\");\r",
+									"pm.collectionVariables.unset(\"addedUserName\");\r",
+									"pm.collectionVariables.unset(\"addedFirstName\");\r",
+									"pm.collectionVariables.unset(\"addedLastName\");\r",
+									"pm.collectionVariables.unset(\"addedEmail\");\r",
+									"pm.collectionVariables.unset(\"addedPassword\");\r",
+									"pm.collectionVariables.unset(\"addedPhone\");\r",
+									"pm.collectionVariables.unset(\"addedUserStatus\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://petstore.swagger.io/v2/user/{{addedUserName}}",
+							"protocol": "https",
+							"host": [
+								"petstore",
+								"swagger",
+								"io"
+							],
+							"path": [
+								"v2",
+								"user",
+								"{{addedUserName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Check status code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Response time is less than 1000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check code in response data\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(200);\r",
+									"});\r",
+									"pm.test(\"Check user id\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql(\"ok\");\r",
+									"});\r",
+									"\r",
+									"// Delete all the values from envoironment level\r",
+									"pm.environment.unset(\"userName\");\r",
+									"pm.environment.unset(\"password\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "https://petstore.swagger.io/v2/user/logout",
+							"protocol": "https",
+							"host": [
+								"petstore",
+								"swagger",
+								"io"
+							],
+							"path": [
+								"v2",
+								"user",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "pet_store store module",
+			"item": [
+				{
+					"name": "Store inventory of pets",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Response time is less than 1000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "https://petstore.swagger.io/v2/store/inventory",
+							"protocol": "https",
+							"host": [
+								"petstore",
+								"swagger",
+								"io"
+							],
+							"path": [
+								"v2",
+								"store",
+								"inventory"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Place an order for pet",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Create order credentials\r",
+									"var rand_id = pm.variables.replaceIn(\"{{$randomInt}}\");\r",
+									"var rand_petid = pm.variables.replaceIn(\"{{$randomInt}}\") ;\r",
+									"var rand_quantity = Number(pm.variables.replaceIn(\"{{$randomInt}}\"))%100 ;\r",
+									"var rand_complete = pm.variables.replaceIn(\"{{$randomBoolean}}\") ;\r",
+									"\r",
+									"// Store the user credential as collection level\r",
+									"pm.collectionVariables.set(\"orderId\", rand_id);\r",
+									"pm.collectionVariables.set(\"orderPetId\", rand_petid); \r",
+									"pm.variables.set(\"orderPetQuantity\", rand_quantity);\r",
+									"pm.variables.set(\"orderComplete\", rand_complete)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Check status code', function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test('Response time is less than 1000ms', function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Check for response JSON values\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id.toString()).to.eql(pm.variables.replaceIn(\"{{orderId}}\"));\r",
+									"    pm.expect(jsonData.petId.toString()).to.eql(pm.variables.replaceIn(\"{{orderPetId}}\"));\r",
+									"    pm.expect(jsonData.quantity.toString()).to.eql(pm.variables.replaceIn(\"{{orderPetQuantity}}\"));\r",
+									"    pm.expect(jsonData.status).to.be.oneOf([\"placed\",\"unplaced\"]);\r",
+									"    pm.expect(jsonData.complete).to.be.oneOf([true,false]);\r",
+									"});\r",
+									"\r",
+									"// validation of JSON schema\r",
+									"var schema = {\r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"petId\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"quantity\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"shipDate\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"status\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"complete\": {\r",
+									"      \"type\": \"boolean\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"id\",\r",
+									"    \"petId\",\r",
+									"    \"quantity\",\r",
+									"    \"shipDate\",\r",
+									"    \"status\",\r",
+									"    \"complete\"\r",
+									"  ]\r",
+									"}\r",
+									"pm.test('Schema is valid', function() {\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": {{orderId}},\r\n  \"petId\": {{orderPetId}},\r\n  \"quantity\": {{orderPetQuantity}},\r\n  \"shipDate\": \"2024-04-21T15:43:01.308Z\",\r\n  \"status\": \"placed\",\r\n  \"complete\": {{orderComplete}}\r\n}"
+						},
+						"url": {
+							"raw": "https://petstore.swagger.io/v2/store/order",
+							"protocol": "https",
+							"host": [
+								"petstore",
+								"swagger",
+								"io"
+							],
+							"path": [
+								"v2",
+								"store",
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find purchase order by Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Check status code', function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test('Response time is less than 1000ms', function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Check for response JSON values\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id.toString()).to.eql(pm.variables.replaceIn(\"{{orderId}}\"));\r",
+									"    pm.expect(jsonData.petId.toString()).to.eql(pm.variables.replaceIn(\"{{orderPetId}}\"));\r",
+									"    pm.expect(jsonData.quantity.toString()).to.eql(pm.variables.replaceIn(\"{{orderPetQuantity}}\"));\r",
+									"    pm.expect(jsonData.status).to.be.oneOf([\"placed\",\"unplaced\"]);\r",
+									"    pm.expect(jsonData.complete).to.be.oneOf([true,false]);\r",
+									"});\r",
+									"\r",
+									"// validation of JSON schema\r",
+									"var schema = {\r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"petId\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"quantity\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"shipDate\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"status\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"complete\": {\r",
+									"      \"type\": \"boolean\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"id\",\r",
+									"    \"petId\",\r",
+									"    \"quantity\",\r",
+									"    \"shipDate\",\r",
+									"    \"status\",\r",
+									"    \"complete\"\r",
+									"  ]\r",
+									"}\r",
+									"pm.test('Schema is valid', function() {\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://petstore.swagger.io/v2/store/order/{{orderId}}",
+							"protocol": "https",
+							"host": [
+								"petstore",
+								"swagger",
+								"io"
+							],
+							"path": [
+								"v2",
+								"store",
+								"order",
+								"{{orderId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Check status code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Response time is less than 1000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check code in response data\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(200);\r",
+									"});\r",
+									"pm.test(\"Check user id\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql(pm.variables.replaceIn(\"{{orderId}}\"));\r",
+									"});\r",
+									"\r",
+									"// Delete all the values from collection level\r",
+									"pm.collectionVariables.unset(\"orderId\");\r",
+									"pm.collectionVariables.unset(\"orderPetId\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "accept",
+								"value": ""
+							}
+						],
+						"url": {
+							"raw": "https://petstore.swagger.io/v2/store/order/{{orderId}}",
+							"protocol": "https",
+							"host": [
+								"petstore",
+								"swagger",
+								"io"
+							],
+							"path": [
+								"v2",
+								"store",
+								"order",
+								"{{orderId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "pet_store pet module",
+			"item": [
+				{
+					"name": "Add new pet",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Create order credentials\r",
+									"var rand_id = pm.variables.replaceIn(\"{{$randomInt}}\");\r",
+									"\r",
+									"// Store the user credential as collection level\r",
+									"pm.collectionVariables.set(\"petId\", rand_id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Check status code', function () {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('Response time is less than 1000ms', function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"})",
+									"",
+									"pm.test(\"Check id values\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id.toString()).to.eql(pm.variables.replaceIn(\"{{petId}}\"));",
+									"    pm.expect(jsonData.category.id.toString()).to.eql(pm.variables.replaceIn(\"{{petId}}\"));",
+									"    pm.expect(jsonData.tags[0].id.toString()).to.eql(pm.variables.replaceIn(\"{{petId}}\"));",
+									"});",
+									"pm.test(\"Check pet status\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.be.oneOf([\"available\",\"unavailable\"]);",
+									"});",
+									"",
+									"// Validate JSON schema",
+									"var schema = {",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"id\": {",
+									"      \"type\": \"integer\"",
+									"    },",
+									"    \"category\": {",
+									"      \"type\": \"object\",",
+									"      \"properties\": {",
+									"        \"id\": {",
+									"          \"type\": \"integer\"",
+									"        },",
+									"        \"name\": {",
+									"          \"type\": \"string\"",
+									"        }",
+									"      },",
+									"      \"required\": [",
+									"        \"id\",",
+									"        \"name\"",
+									"      ]",
+									"    },",
+									"    \"name\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"photoUrls\": {",
+									"      \"type\": \"array\",",
+									"      \"items\": [",
+									"        {",
+									"          \"type\": \"string\"",
+									"        }",
+									"      ]",
+									"    },",
+									"    \"tags\": {",
+									"      \"type\": \"array\",",
+									"      \"items\": [",
+									"        {",
+									"          \"type\": \"object\",",
+									"          \"properties\": {",
+									"            \"id\": {",
+									"              \"type\": \"integer\"",
+									"            },",
+									"            \"name\": {",
+									"              \"type\": \"string\"",
+									"            }",
+									"          },",
+									"          \"required\": [",
+									"            \"id\",",
+									"            \"name\"",
+									"          ]",
+									"        }",
+									"      ]",
+									"    },",
+									"    \"status\": {",
+									"      \"type\": \"string\"",
+									"    }",
+									"  },",
+									"  \"required\": [",
+									"    \"id\",",
+									"    \"category\",",
+									"    \"name\",",
+									"    \"photoUrls\",",
+									"    \"tags\",",
+									"    \"status\"",
+									"  ]",
+									"}",
+									"pm.test('Schema is valid', function() {",
+									"  pm.response.to.have.jsonSchema(schema);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": {{petId}},\r\n  \"category\": {\r\n    \"id\": {{petId}},\r\n    \"name\": \"Husky\"\r\n  },\r\n  \"name\": \"Ralph\",\r\n  \"photoUrls\": [\r\n    \"photo_link\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": {{petId}},\r\n      \"name\": \"Ralph\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}"
+						},
+						"url": {
+							"raw": "https://petstore.swagger.io/v2/pet",
+							"protocol": "https",
+							"host": [
+								"petstore",
+								"swagger",
+								"io"
+							],
+							"path": [
+								"v2",
+								"pet"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update existing pet",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Check status code', function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test('Response time is less than 1000ms', function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Check id values\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id.toString()).to.eql(pm.variables.replaceIn(\"{{petId}}\"));\r",
+									"    pm.expect(jsonData.category.id.toString()).to.eql(pm.variables.replaceIn(\"{{petId}}\"));\r",
+									"    pm.expect(jsonData.tags[0].id.toString()).to.eql(pm.variables.replaceIn(\"{{petId}}\"));\r",
+									"});\r",
+									"pm.test(\"Check pet status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.be.oneOf([\"available\",\"unavailable\"]);\r",
+									"});\r",
+									"\r",
+									"// Validate JSON schema\r",
+									"var schema = {\r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"category\": {\r",
+									"      \"type\": \"object\",\r",
+									"      \"properties\": {\r",
+									"        \"id\": {\r",
+									"          \"type\": \"integer\"\r",
+									"        },\r",
+									"        \"name\": {\r",
+									"          \"type\": \"string\"\r",
+									"        }\r",
+									"      },\r",
+									"      \"required\": [\r",
+									"        \"id\",\r",
+									"        \"name\"\r",
+									"      ]\r",
+									"    },\r",
+									"    \"name\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"photoUrls\": {\r",
+									"      \"type\": \"array\",\r",
+									"      \"items\": [\r",
+									"        {\r",
+									"          \"type\": \"string\"\r",
+									"        }\r",
+									"      ]\r",
+									"    },\r",
+									"    \"tags\": {\r",
+									"      \"type\": \"array\",\r",
+									"      \"items\": [\r",
+									"        {\r",
+									"          \"type\": \"object\",\r",
+									"          \"properties\": {\r",
+									"            \"id\": {\r",
+									"              \"type\": \"integer\"\r",
+									"            },\r",
+									"            \"name\": {\r",
+									"              \"type\": \"string\"\r",
+									"            }\r",
+									"          },\r",
+									"          \"required\": [\r",
+									"            \"id\",\r",
+									"            \"name\"\r",
+									"          ]\r",
+									"        }\r",
+									"      ]\r",
+									"    },\r",
+									"    \"status\": {\r",
+									"      \"type\": \"string\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"id\",\r",
+									"    \"category\",\r",
+									"    \"name\",\r",
+									"    \"photoUrls\",\r",
+									"    \"tags\",\r",
+									"    \"status\"\r",
+									"  ]\r",
+									"}\r",
+									"pm.test('Schema is valid', function() {\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": {{petId}},\r\n  \"category\": {\r\n    \"id\": {{petId}},\r\n    \"name\": \"Sam\"\r\n  },\r\n  \"name\": \"Sam\",\r\n  \"photoUrls\": [\r\n    \"photo_link\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": {{petId}},\r\n      \"name\": \"Sam\"\r\n    }\r\n  ],\r\n  \"status\": \"unavailable\"\r\n}"
+						},
+						"url": {
+							"raw": "https://petstore.swagger.io/v2/pet",
+							"protocol": "https",
+							"host": [
+								"petstore",
+								"swagger",
+								"io"
+							],
+							"path": [
+								"v2",
+								"pet"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find pet by status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Check status code', function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test('Response time is less than 1000ms', function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"})\r",
+									"\r",
+									"const jsonData = pm.response.json();\r",
+									"pm.test(\"Test data type of the response\", () => {\r",
+									"  pm.expect(jsonData).to.be.an(\"array\");\r",
+									"  pm.expect(jsonData[0]).to.be.a(\"object\");\r",
+									"  pm.expect(jsonData[0].id).to.be.a(\"number\");\r",
+									"  pm.expect(jsonData[0].name).to.be.a(\"string\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "https://petstore.swagger.io/v2/pet/findByStatus?status=available",
+							"protocol": "https",
+							"host": [
+								"petstore",
+								"swagger",
+								"io"
+							],
+							"path": [
+								"v2",
+								"pet",
+								"findByStatus"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "available"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find pet by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Check status code', function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test('Response time is less than 1000ms', function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Check id values\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id.toString()).to.eql(pm.variables.replaceIn(\"{{petId}}\"));\r",
+									"    pm.expect(jsonData.category.id.toString()).to.eql(pm.variables.replaceIn(\"{{petId}}\"));\r",
+									"    pm.expect(jsonData.tags[0].id.toString()).to.eql(pm.variables.replaceIn(\"{{petId}}\"));\r",
+									"});\r",
+									"pm.test(\"Check pet status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.be.oneOf([\"available\",\"unavailable\"]);\r",
+									"});\r",
+									"\r",
+									"// Validate JSON schema\r",
+									"var schema = {\r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"category\": {\r",
+									"      \"type\": \"object\",\r",
+									"      \"properties\": {\r",
+									"        \"id\": {\r",
+									"          \"type\": \"integer\"\r",
+									"        },\r",
+									"        \"name\": {\r",
+									"          \"type\": \"string\"\r",
+									"        }\r",
+									"      },\r",
+									"      \"required\": [\r",
+									"        \"id\",\r",
+									"        \"name\"\r",
+									"      ]\r",
+									"    },\r",
+									"    \"name\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"photoUrls\": {\r",
+									"      \"type\": \"array\",\r",
+									"      \"items\": [\r",
+									"        {\r",
+									"          \"type\": \"string\"\r",
+									"        }\r",
+									"      ]\r",
+									"    },\r",
+									"    \"tags\": {\r",
+									"      \"type\": \"array\",\r",
+									"      \"items\": [\r",
+									"        {\r",
+									"          \"type\": \"object\",\r",
+									"          \"properties\": {\r",
+									"            \"id\": {\r",
+									"              \"type\": \"integer\"\r",
+									"            },\r",
+									"            \"name\": {\r",
+									"              \"type\": \"string\"\r",
+									"            }\r",
+									"          },\r",
+									"          \"required\": [\r",
+									"            \"id\",\r",
+									"            \"name\"\r",
+									"          ]\r",
+									"        }\r",
+									"      ]\r",
+									"    },\r",
+									"    \"status\": {\r",
+									"      \"type\": \"string\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"id\",\r",
+									"    \"category\",\r",
+									"    \"name\",\r",
+									"    \"photoUrls\",\r",
+									"    \"tags\",\r",
+									"    \"status\"\r",
+									"  ]\r",
+									"}\r",
+									"pm.test('Schema is valid', function() {\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "https://petstore.swagger.io/v2/pet/{{petId}}",
+							"protocol": "https",
+							"host": [
+								"petstore",
+								"swagger",
+								"io"
+							],
+							"path": [
+								"v2",
+								"pet",
+								"{{petId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete pet details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Check status code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Response time is less than 1000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check code in response data\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(200);\r",
+									"});\r",
+									"pm.test(\"Check pet id\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.eql(pm.variables.replaceIn(\"{{petId}}\"));\r",
+									"});\r",
+									"\r",
+									"// Delete all the values from collection level\r",
+									"pm.collectionVariables.unset(\"petId\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "https://petstore.swagger.io/v2/pet/{{petId}}",
+							"protocol": "https",
+							"host": [
+								"petstore",
+								"swagger",
+								"io"
+							],
+							"path": [
+								"v2",
+								"pet",
+								"{{petId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
